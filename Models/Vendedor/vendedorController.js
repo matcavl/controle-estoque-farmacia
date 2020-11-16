@@ -112,68 +112,67 @@ router.post('/venda', (req, res) => {
     const quantidadePedido = req.body.quantidade;
     const nomeCliente = req.body.nomeCliente;
     const telefoneCliente = req.body.telefoneCliente;
+    let rest;
     let preco = 0;
     let total = 0;
 
     if (nomeCliente, telefoneCliente) {
         Cliente.findOne({
             where: {
-                nomeCliente: nomeCliente,
+                nomeCliente: nomeCliente, 
                 telefone: telefoneCliente
             }
         }).then((cliente) => {
-            if (cliente) {
-                // Cliente Existir
+            // Se o Cliente Existir
+            if (cliente != undefined) {
                 Produto.findByPk(pedido)
-                    .then((produto) => {
-                        if (produto.quantidade >= quantidadePedido) {
-                            preco = produto.preco*quantidadePedido
-                            Produto.update({quantidade: produto.quantidade - quantidadePedido}, {
-                                where: {
-                                    id: pedido
-                                }
-                            }).then(() => Cliente.findOne({
+                .then((produto) => {
+                    if (produto.quantidade >= quantidadePedido) {
+                        preco = produto.preco * quantidadePedido;
+                        rest = produto.quantidade - quantidadePedido;
+                        Produto.update({quantidade: rest}, {
+                            where: {
+                                id: pedido
+                            }
+                        }).then(() => Cliente.findOne({
+                            where: {
+                                nomeCliente: nomeCliente,
+                                telefone: telefoneCliente
+                            }
+                        })).then((cliente) => {
+                            total = cliente.total;
+                            total += preco;
+    
+                            Cliente.update({total: total}, {
                                 where: {
                                     nomeCliente: nomeCliente,
-                                    telefone: telefoneCliente,
+                                    telefone: telefoneCliente
                                 }
-                            })).then((cliente) => {
-                                total = cliente.total
-                                total += preco
-    
-                                Cliente.update({total: total}, {
-                                    where: {
-                                        nomeCliente: nomeCliente,
-                                        telefone: telefoneCliente
-                                    }
-                                }).then(() => {
-                                    Cliente.findAll().then((clientes) => {
-                                        res.render('Cliente/paginaFinal', {clientes: clientes});
-                                    })
+                            }).then(() => {
+                                Cliente.findAll().then((clientes) => {
+                                    res.render('Cliente/paginaFinal', {clientes: clientes});
                                 })
                             })
-                        } else {
-                            res.render('/Produto/produtoList')
-                        }
-                    })
-    
+                        })
+                    }
+                })
             } else {
-                // Cliente não existir
                 Produto.findByPk(pedido)
-                    .then((produto) => {
-                        if (produto.quantidade >= quantidadePedido) {
-                            preco = produto.preco * quantidadePedido;
-                            total += preco
-    
-                            Cliente.create({
-                                nomeCliente: nomeCliente,
-                                telefone: telefoneCliente,
-                                total: total
-                            }).then(() => Cliente.findAll().then((clientes) => {
-                                res.render('Cliente/paginaFinal', {clientes: clientes});
-                            }))
-                        }
-                    })
+                .then((produto) => {
+                    if (produto.quantidade >= quantidadePedido) {
+                        preco = produto.preco * quantidadePedido;
+                        rest = produto.quantidade - quantidadePedido;
+                        total += preco; 
+
+                        Cliente.create({
+                            nomeCliente: nomeCliente,
+                            telefone: telefoneCliente,
+                            total: total
+                        }).then(() => Cliente.findAll().then((clientes) => {
+                            res.render('Cliente/paginaFinal', {clientes: clientes});
+                        }))
+                    }
+                })
             }
         })
     } else {
@@ -205,7 +204,7 @@ router.get('/finalizarVenda', (req, res) => {
 
 router.post('/receberPagamento', (req, res) => {
     const id = req.body.id
-
+    // Mexer aqui também
     Cliente.findByPk(id)
     .then((cliente) => {
         Cliente.update({total: 0}, {
@@ -214,6 +213,44 @@ router.post('/receberPagamento', (req, res) => {
             }
         }).then(() => {
             res.render('Vendedor/sessaoVendedor');
+        })
+    })
+})
+
+
+router.post('/atualizarProdutos', (req, res) => {
+    const id = req.body.prod;
+    Produto.findOne({
+        where: {
+            id: id
+        }
+    }).then((produto) => {
+        res.render('Produto/atualizarProdutos', {produtos: produto})
+    })
+})
+
+router.post('/finalizarAtualizacao', (req, res) => {
+    const id = req.body.id; 
+    const nomeProduto = req.body.nomeProduto;
+    const novaQntd = parseInt(req.body.novaQntd);
+    let total = 0;
+
+    Produto.findOne({
+        where: {
+            nomeProduto: nomeProduto
+        }
+    }).then((produto) => {
+        total = produto.quantidade;
+        total += novaQntd;
+        
+        Produto.update({quantidade: total}, {
+            where: {
+                nomeProduto: nomeProduto,
+            }
+        }).then(() => {
+            Produto.findAll().then((produtos) => {
+                res.render('Produto/produtoList', {produtos: produtos});
+            })
         })
     })
 })
