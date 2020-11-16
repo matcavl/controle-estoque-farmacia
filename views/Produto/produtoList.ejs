@@ -10,6 +10,7 @@
                     <th>Nome Produto</th>
                     <th>Quantidade</th>
                     <th>Preço</th>
+                    <th>Ações</th>
                 </tr>
             </thead>
             <tbody>
@@ -19,6 +20,12 @@
                         <th> <%= produtos.nomeProduto %></th>
                         <th> <%= produtos.quantidade %> </th>
                         <th> <%= produtos.preco %> </th>
+                        <th>
+                            <form action="/atualizarProdutos" method="POST">
+                                <input type="hidden" name="prod" value="<%= produtos.id %>">
+                                <button class="btn btn-primary">Atualizar</button>
+                            </form>
+                        </th>
                     </tr>
                 <% }) %>
             </tbody>
