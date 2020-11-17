@@ -5,7 +5,7 @@
 - Faculdade Alpha
 - Disciplina: Banco de Dados: 
 - Professor: Lucas Sampaio
-- Aluno: Mateus
+- Aluno: Mateus Cavalcanti
 
 <hr>
 
@@ -16,18 +16,20 @@
 
 #### 🚀 Techs: 
 
-- EJS
 - NodeJS
+- EJS
+- Body Parser
 - Express
-- Express-session
+- Express Session
 - Sequelize
-- MySQL
+- Mysql2
+- Nodemon
 - Bootstrap
 
 <hr>
 
 #### 📃 Documentação 
-#### Você pode encontrar a documentação desse projeto para download ou leitura online clicando [Aqui - Documentação Versão 001.10/2020](https://drive.google.com/file/d/1HK6jt6qMUvBU-iNL66MhUuGzbU60CznM/view)
+#### Você pode encontrar a documentação desse projeto para download ou leitura online clicando [Aqui - Documentação Versão 01.002 - 11/2020](https://drive.google.com/file/d/1G-AjRRLXhzfPCOGgvUTyMmf8Bme5ZmTr/view)
 
 <hr>
 
